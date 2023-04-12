@@ -1,0 +1,36 @@
+{
+	"name": "sdetype2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "sqltodataset",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
+			},
+			{
+				"name": "active_flag",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "SalesLT",
+			"table": "emp_type"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

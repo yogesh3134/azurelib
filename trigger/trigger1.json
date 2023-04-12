@@ -1,0 +1,25 @@
+{
+	"name": "trigger1",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "assign10",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/landing/blobs/assign10",
+			"blobPathEndsWith": "txt",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/edc27ed1-39ef-4b70-b929-239f1e19bb9e/resourceGroups/azurelibstg/providers/Microsoft.Storage/storageAccounts/azuredataengineer313",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

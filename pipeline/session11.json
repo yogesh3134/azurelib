@@ -1,0 +1,93 @@
+{
+	"name": "session11",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"supportRFC5988": "true"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".txt"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "datsetrestAPI",
+						"type": "DatasetReference",
+						"parameters": {
+							"country": "spain"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "datasettoadls",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": "SDE"
+						}
+					}
+				]
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Completed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-11.eastus.logic.azure.com:443/workflows/00380b50e66341c399e2c53240953071/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iUsk-kU9qD5l1vhTWBFqx3aawPs2YviOpclgICaez-8",
+					"method": "POST",
+					"body": {
+						"reciepent": "yp26501@gmail.com",
+						"Status": "Successfull",
+						"Pipeline": "Session_11"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-09T16:31:51Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

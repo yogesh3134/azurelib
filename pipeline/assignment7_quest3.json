@@ -1,0 +1,313 @@
+{
+	"name": "assignment7_quest3",
+	"properties": {
+		"activities": [
+			{
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "datasettoadls",
+						"type": "DatasetReference",
+						"parameters": {
+							"path": "Customer"
+						}
+					},
+					"fieldList": [
+						"childItems",
+						"itemName",
+						"itemType"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"modifiedDatetimeStart": "2023-03-21T00:00:00Z",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata1').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "If Condition1",
+							"type": "IfCondition",
+							"dependsOn": [],
+							"userProperties": [],
+							"typeProperties": {
+								"expression": {
+									"value": "@equals(item().type, 'File')",
+									"type": "Expression"
+								},
+								"ifTrueActivities": [
+									{
+										"name": "Copy data1",
+										"type": "Copy",
+										"dependsOn": [],
+										"policy": {
+											"timeout": "0.12:00:00",
+											"retry": 0,
+											"retryIntervalInSeconds": 30,
+											"secureOutput": false,
+											"secureInput": false
+										},
+										"userProperties": [],
+										"typeProperties": {
+											"source": {
+												"type": "DelimitedTextSource",
+												"storeSettings": {
+													"type": "AzureBlobFSReadSettings",
+													"recursive": true,
+													"wildcardFolderPath": "Customer",
+													"wildcardFileName": "saleslt.Customer.txt",
+													"enablePartitionDiscovery": false
+												},
+												"formatSettings": {
+													"type": "DelimitedTextReadSettings"
+												}
+											},
+											"sink": {
+												"type": "AzureSqlSink",
+												"writeBehavior": "upsert",
+												"upsertSettings": {
+													"useTempDB": false,
+													"keys": [
+														"CustomerID"
+													]
+												},
+												"sqlWriterUseTableLock": false,
+												"disableMetricsCollection": false
+											},
+											"enableStaging": false,
+											"translator": {
+												"type": "TabularTranslator",
+												"mappings": [
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 1
+														},
+														"sink": {
+															"name": "CustomerID",
+															"type": "Int32",
+															"physicalType": "int"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 2
+														},
+														"sink": {
+															"name": "NameStyle",
+															"type": "Boolean",
+															"physicalType": "bit"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 3
+														},
+														"sink": {
+															"name": "Title",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 4
+														},
+														"sink": {
+															"name": "FirstName",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 5
+														},
+														"sink": {
+															"name": "MiddleName",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 6
+														},
+														"sink": {
+															"name": "LastName",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 7
+														},
+														"sink": {
+															"name": "Suffix",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 8
+														},
+														"sink": {
+															"name": "CompanyName",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 9
+														},
+														"sink": {
+															"name": "SalesPerson",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 10
+														},
+														"sink": {
+															"name": "EmailAddress",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 11
+														},
+														"sink": {
+															"name": "Phone",
+															"type": "String",
+															"physicalType": "nvarchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 12
+														},
+														"sink": {
+															"name": "PasswordHash",
+															"type": "String",
+															"physicalType": "varchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 13
+														},
+														"sink": {
+															"name": "PasswordSalt",
+															"type": "String",
+															"physicalType": "varchar"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 14
+														},
+														"sink": {
+															"name": "rowguid",
+															"type": "Guid",
+															"physicalType": "uniqueidentifier"
+														}
+													},
+													{
+														"source": {
+															"type": "String",
+															"ordinal": 15
+														},
+														"sink": {
+															"name": "ModifiedDate",
+															"type": "DateTime",
+															"physicalType": "datetime"
+														}
+													}
+												],
+												"typeConversion": true,
+												"typeConversionSettings": {
+													"allowDataTruncation": true,
+													"treatBooleanAsNumber": false
+												}
+											}
+										},
+										"inputs": [
+											{
+												"referenceName": "forlanding",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "sqltodataset",
+												"type": "DatasetReference",
+												"parameters": {
+													"database": "saleslt",
+													"table": "Customer"
+												}
+											}
+										]
+									}
+								]
+							}
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-09T16:31:51Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,109 @@
+{
+	"name": "assign10",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@createArray('https://restcountries.com/v3.1/name/us', 'https://restcountries.com/v3.1/name/india','https://restcountries.com/v3.1/name/russia','https://restcountries.com/v3.1/name/china')",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET",
+									"paginationRules": {
+										"supportRFC5988": "true"
+									}
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "datsetrestAPI",
+									"type": "DatasetReference",
+									"parameters": {
+										"country": {
+											"value": "@item()",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "datasettoadls",
+									"type": "DatasetReference",
+									"parameters": {
+										"path": "assign10"
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "ForEach1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://prod-01.eastus.logic.azure.com:443/workflows/42e4ea0cdae34707a4411c0dced95cfc/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2lptgsl4wiv6ZZc-1V5YxRQYIko2JGw2vPKJ0pyOXA4",
+					"method": "POST",
+					"body": {
+						"value": "{\n\"subject\": \"pipeline name assign11\",\n\n\"Status\": \"Success\",\n\n\"to\": \"yp26501@gmail.com\",\n\n\"Body\": \"Pipeline assign11 is successful\"\n}",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-12T17:28:28Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
