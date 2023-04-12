@@ -1,0 +1,2798 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "azurelibadf313"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/edc27ed1-39ef-4b70-b929-239f1e19bb9e/resourceGroups/azurelibstg/providers/Microsoft.Storage/storageAccounts/azuredataengineer313"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment7')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "forlanding",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().type,'File')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": "Customer",
+															"wildcardFileName": "*",
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "forlanding",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "datasettoadls",
+														"type": "DatasetReference",
+														"parameters": {
+															"path": "CustomerAddress"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment_qa4')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "assignment9_q4",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/get_metadata_session7')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "forlanding",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().type,'File')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"modifiedDatetimeStart": "2023-03-18T00:00:00Z",
+															"wildcardFileName": "*",
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "DelimitedTextSink",
+														"storeSettings": {
+															"type": "AzureBlobFSWriteSettings"
+														},
+														"formatSettings": {
+															"type": "DelimitedTextWriteSettings",
+															"quoteAllText": true,
+															"fileExtension": ".txt"
+														}
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "forlanding",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "datasettoadls",
+														"type": "DatasetReference",
+														"parameters": {
+															"path": "product"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/session11')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"supportRFC5988": "true"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "datsetrestAPI",
+								"type": "DatasetReference",
+								"parameters": {
+									"country": "spain"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "SDE"
+								}
+							}
+						]
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Completed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-11.eastus.logic.azure.com:443/workflows/00380b50e66341c399e2c53240953071/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=iUsk-kU9qD5l1vhTWBFqx3aawPs2YviOpclgICaez-8",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"reciepent": "yp26501@gmail.com",
+								"Status": "Successfull",
+								"Pipeline": "Session_11"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sqltodataset')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "vault_LS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"database": {
+						"type": "string",
+						"defaultValue": "salestlt"
+					},
+					"table": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().database",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().table",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SDE_type2')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference"
+							},
+							"name": "fromcsv"
+						},
+						{
+							"dataset": {
+								"referenceName": "sdetype2",
+								"type": "DatasetReference"
+							},
+							"name": "fromtable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "sdetype2",
+								"type": "DatasetReference"
+							},
+							"name": "sink2"
+						},
+						{
+							"dataset": {
+								"referenceName": "sdetype2",
+								"type": "DatasetReference"
+							},
+							"name": "sink3"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "lookup1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "derivedColumn1"
+						},
+						{
+							"name": "select2"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "derivedColumn2"
+						},
+						{
+							"name": "select3"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          idfile as short,",
+						"          name as string,",
+						"          city as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> fromcsv",
+						"source(output(",
+						"          id as integer,",
+						"          name as string,",
+						"          city as string,",
+						"          active_flag as integer",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> fromtable",
+						"fromtable select(mapColumn(",
+						"          id_table = id,",
+						"          active_flag_table = active_flag",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: false) ~> select1",
+						"fromcsv, select1 lookup(idfile == id_table,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookup1",
+						"lookup1 filter(!isNull(id_table)) ~> filter1",
+						"select2 derive(active_flag = 0) ~> derivedColumn1",
+						"filter1 select(mapColumn(",
+						"          idfile",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select2",
+						"derivedColumn1 alterRow(updateIf(true())) ~> AlterRow1",
+						"fromcsv derive(active_flag = 1) ~> derivedColumn2",
+						"AlterRow1 select(mapColumn(",
+						"          id = idfile,",
+						"          active_flag",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select3",
+						"derivedColumn2 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          name as string,",
+						"          city as string,",
+						"          active_flag as integer",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:true,",
+						"     updateable:false,",
+						"     upsertable:false,",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 0,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink2",
+						"select3 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          id as integer,",
+						"          name as string,",
+						"          city as string,",
+						"          active_flag as integer",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:true,",
+						"     upsertable:false,",
+						"     keys:['id'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink3"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Ingestion_Customer_SQLDB_ADLS')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select count(*) as total from saleslt.product",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "product"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('Lookup1').output.firstRow.total,10)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "product"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": "product"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment7_quest3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get Metadata1",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "Customer"
+								}
+							},
+							"fieldList": [
+								"childItems",
+								"itemName",
+								"itemType"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"modifiedDatetimeStart": "2023-03-21T00:00:00Z",
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "DelimitedTextReadSettings"
+							}
+						}
+					},
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata1').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "If Condition1",
+									"type": "IfCondition",
+									"dependsOn": [],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@equals(item().type, 'File')",
+											"type": "Expression"
+										},
+										"ifTrueActivities": [
+											{
+												"name": "Copy data1",
+												"type": "Copy",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "0.12:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobFSReadSettings",
+															"recursive": true,
+															"wildcardFolderPath": "Customer",
+															"wildcardFileName": "saleslt.Customer.txt",
+															"enablePartitionDiscovery": false
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink",
+														"writeBehavior": "upsert",
+														"upsertSettings": {
+															"useTempDB": false,
+															"keys": [
+																"CustomerID"
+															]
+														},
+														"sqlWriterUseTableLock": false,
+														"disableMetricsCollection": false
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"mappings": [
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 1
+																},
+																"sink": {
+																	"name": "CustomerID",
+																	"type": "Int32",
+																	"physicalType": "int"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 2
+																},
+																"sink": {
+																	"name": "NameStyle",
+																	"type": "Boolean",
+																	"physicalType": "bit"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 3
+																},
+																"sink": {
+																	"name": "Title",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 4
+																},
+																"sink": {
+																	"name": "FirstName",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 5
+																},
+																"sink": {
+																	"name": "MiddleName",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 6
+																},
+																"sink": {
+																	"name": "LastName",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 7
+																},
+																"sink": {
+																	"name": "Suffix",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 8
+																},
+																"sink": {
+																	"name": "CompanyName",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 9
+																},
+																"sink": {
+																	"name": "SalesPerson",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 10
+																},
+																"sink": {
+																	"name": "EmailAddress",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 11
+																},
+																"sink": {
+																	"name": "Phone",
+																	"type": "String",
+																	"physicalType": "nvarchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 12
+																},
+																"sink": {
+																	"name": "PasswordHash",
+																	"type": "String",
+																	"physicalType": "varchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 13
+																},
+																"sink": {
+																	"name": "PasswordSalt",
+																	"type": "String",
+																	"physicalType": "varchar"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 14
+																},
+																"sink": {
+																	"name": "rowguid",
+																	"type": "Guid",
+																	"physicalType": "uniqueidentifier"
+																}
+															},
+															{
+																"source": {
+																	"type": "String",
+																	"ordinal": 15
+																},
+																"sink": {
+																	"name": "ModifiedDate",
+																	"type": "DateTime",
+																	"physicalType": "datetime"
+																}
+															}
+														],
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "forlanding",
+														"type": "DatasetReference",
+														"parameters": {}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "sqltodataset",
+														"type": "DatasetReference",
+														"parameters": {
+															"database": "saleslt",
+															"table": "Customer"
+														}
+													}
+												]
+											}
+										]
+									}
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment7_quest5')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@createArray('select * from saleslt.product where productid > 100', 'select * from saleslt.customer where customerid > 100 and customerid < 1000')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": {
+												"value": "@item()",
+												"type": "Expression"
+											},
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": "assign7_quest5"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment7_question4')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "getting date from cobtable",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select max(latest) as maxdate from saleslt.newvalue",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "newvalue"
+								}
+							}
+						}
+					},
+					{
+						"name": "getting max date from table",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select max(modifieddate) as maxdate_cust from saleslt.customer",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						}
+					},
+					{
+						"name": "copying data to a file depending on latest date",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "getting date from cobtable",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "getting max date from table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select * from saleslt.customer where modifieddate > '@{activity('getting date from cobtable').output.firstRow.maxdate}' and modifieddate <= '@{activity('getting max date from table').output.firstRow.maxdate_cust}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "increment"
+								}
+							}
+						]
+					},
+					{
+						"name": "getting max date from table and cobdate",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "copying data to a file depending on latest date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [
+							{
+								"name": "Source",
+								"value": "@{'saleslt'}.@{'customer'}"
+							},
+							{
+								"name": "Destination",
+								"value": "@{'saleslt'}.@{'cobdate '}"
+							}
+						],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select '@{activity('getting max date from table').output.firstRow.maxdate_cust}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cobdateupdate",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "updating the cobdate table",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "getting max date from table and cobdate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"modifiedDatetimeStart": "2023-03-21T00:00:00Z",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"writeBehavior": "upsert",
+								"upsertSettings": {
+									"useTempDB": true,
+									"keys": [
+										"latest"
+									]
+								},
+								"sqlWriterUseTableLock": false,
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"type": "String",
+											"ordinal": 1
+										},
+										"sink": {
+											"name": "latest",
+											"type": "String",
+											"physicalType": "varchar"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "cobdateupdate",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "newvalue"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/child_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select count(*) as total from saleslt.product",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "product"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('Lookup1').output.firstRow.total,10)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "product"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": "test"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/foreach_copyingmultipletalbes')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@createArray('customer', 'address')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": {
+													"value": "@{item()}/@{formatDateTime(utcNow(), 'yyyy')}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/session13')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "Customer"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/session8')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "getting cobdate from file",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "customer",
+									"wildcardFileName": "cobdate.txt",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "customer"
+								}
+							}
+						}
+					},
+					{
+						"name": "getting max date from table",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select max(modifieddate) as maxdate from saleslt.customer",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "salestlt",
+									"table": "customer"
+								}
+							}
+						}
+					},
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "getting cobdate from file",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "getting max date from table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select * from saleslt.customer where modifieddate > '@{activity('getting cobdate from file').output.firstRow.Prop_0}' and modifieddate <= '@{activity('getting max date from table').output.firstRow.maxdate}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "increment"
+								}
+							}
+						]
+					},
+					{
+						"name": "updating cobdate",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy data1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "select '@{activity('getting max date from table').output.firstRow.maxdate}'",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "cobdateupdate",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/taking_value from_threshold')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"wildcardFolderPath": "product",
+									"wildcardFileName": "*",
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference",
+								"parameters": {
+									"path": "threshold.txt"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Lookup2",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(int(activity('Lookup2').output.firstRow.total),int(activity('Lookup1').output.firstRow.Prop_0))",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": "customer"
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Lookup2",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select count(*) as total from saleslt.customer",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"variables": {
+					"value": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/truncate_before_copy')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select count(*) as total from saleslt.customer",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							}
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('Lookup1').output.firstRow.total,100)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Lookup2",
+									"type": "Lookup",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "truncate table saleslt.customer_copy;\nselect * from saleslt.customer_copy",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"dataset": {
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer_copy"
+											}
+										}
+									}
+								},
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [
+										{
+											"activity": "Lookup2",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "AzureSqlSink",
+											"writeBehavior": "insert",
+											"sqlWriterUseTableLock": false
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer_copy"
+											}
+										}
+									]
+								}
+							]
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/trigger1')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Stopped",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "assign_10",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "BlobEventsTrigger",
+				"typeProperties": {
+					"blobPathBeginsWith": "/landing/blobs/assign10",
+					"blobPathEndsWith": "txt",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('trigger1_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assinment9_1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "datasettoadls",
+								"type": "DatasetReference"
+							},
+							"name": "csvcustfile"
+						},
+						{
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference"
+							},
+							"name": "customertable"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "customertable",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "AlterRow1"
+						},
+						{
+							"name": "lookup1"
+						},
+						{
+							"name": "select3"
+						},
+						{
+							"name": "select4"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerID_file as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as string",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false) ~> csvcustfile",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> customertable",
+						"csvcustfile select(mapColumn(",
+						"          CustomerID_file,",
+						"          FirstName,",
+						"          LastName",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 filter(mod(CustomerID_file, 2)==1) ~> filter1",
+						"select4 alterRow(upsertIf(true())) ~> AlterRow1",
+						"filter1, select3 lookup(CustomerID_file == CustomerID,",
+						"     multiple: false,",
+						"     pickup: 'any',",
+						"     broadcast: 'auto')~> lookup1",
+						"customertable select(mapColumn(",
+						"          CustomerID",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select3",
+						"lookup1 select(mapColumn(",
+						"          CustomerID = CustomerID_file",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select4",
+						"AlterRow1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     input(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     deletable:false,",
+						"     insertable:false,",
+						"     updateable:false,",
+						"     upsertable:true,",
+						"     keys:['CustomerID'],",
+						"     format: 'table',",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflow_asignment8')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference"
+							},
+							"name": "source1"
+						},
+						{
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference"
+							},
+							"name": "source2"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "join1"
+						},
+						{
+							"name": "filter1"
+						},
+						{
+							"name": "sort1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table',",
+						"     wildcardPaths:['Customer']) ~> source1",
+						"source(output(",
+						"          CustomerID as integer,",
+						"          AddressID as integer,",
+						"          AddressType as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as timestamp",
+						"     ),",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     isolationLevel: 'READ_UNCOMMITTED',",
+						"     format: 'table') ~> source2",
+						"source1, source2 join(source1@CustomerID == source2@CustomerID,",
+						"     joinType:'inner',",
+						"     matchType:'exact',",
+						"     ignoreSpaces: false,",
+						"     broadcast: 'auto')~> join1",
+						"join1 filter(source1@CustomerID>1000 || source1@CustomerID<2000) ~> filter1",
+						"filter1 sort(desc(source1@CustomerID, true)) ~> sort1",
+						"sort1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'parquet',",
+						"     fileSystem: 'landing',",
+						"     folderPath: 'CustomerAddress',",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/lookup_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "lookup_condition",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select count(*) as total from saleslt.customer",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "sqltodataset",
+								"type": "DatasetReference",
+								"parameters": {
+									"database": "saleslt",
+									"table": "customer"
+								}
+							},
+							"firstRowOnly": true
+						}
+					},
+					{
+						"name": "If Condition1",
+						"type": "IfCondition",
+						"dependsOn": [
+							{
+								"activity": "lookup_condition",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"expression": {
+								"value": "@greater(activity('lookup_condition').output.firstRow.total,500)",
+								"type": "Expression"
+							},
+							"ifTrueActivities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "AzureSqlSource",
+											"sqlReaderQuery": "select * from saleslt.customer",
+											"queryTimeout": "02:00:00",
+											"partitionOption": "None"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "sqltodataset",
+											"type": "DatasetReference",
+											"parameters": {
+												"database": "saleslt",
+												"table": "customer"
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": {
+													"value": "@{formatDateTime(utcNow(), 'yyyy')}/@{formatDateTime(utcNow(), 'mm')}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Execute Pipeline1",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "If Condition1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "child_pipeline",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:52Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]",
+				"[concat(variables('factoryId'), '/pipelines/child_pipeline')]"
+			]
+		}
+	]
+}

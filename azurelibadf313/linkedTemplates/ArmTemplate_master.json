@@ -1,0 +1,147 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "azurelibadf313"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"cobdateupdate_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'cobdateupdate'"
+		},
+		"datasettoadls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'datasettoadls'"
+		},
+		"datasettosql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'datasettosql'"
+		},
+		"sqltodataset_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqltodataset'"
+		},
+		"vault_LS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'vault_LS'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azurelibsql.database.windows.net;Initial Catalog=azurelib;User ID=yp26501"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"RESTAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://restcountries.com/v3.1/name/"
+		},
+		"azurelibkeyvault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://keyvaultazurelib.vault.azure.net/"
+		},
+		"cobdateupdate_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"datasettoadls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/edc27ed1-39ef-4b70-b929-239f1e19bb9e/resourceGroups/azurelibstg/providers/Microsoft.Storage/storageAccounts/azuredataengineer313"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "azurelibadf313_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureDataLakeStorage1_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					},
+					"cobdateupdate_accountKey": {
+						"value": "[parameters('cobdateupdate_accountKey')]"
+					},
+					"datasettoadls_accountKey": {
+						"value": "[parameters('datasettoadls_accountKey')]"
+					},
+					"datasettosql_connectionString": {
+						"value": "[parameters('datasettosql_connectionString')]"
+					},
+					"sqltodataset_connectionString": {
+						"value": "[parameters('sqltodataset_connectionString')]"
+					},
+					"vault_LS_connectionString": {
+						"value": "[parameters('vault_LS_connectionString')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"RESTAPI_properties_typeProperties_url": {
+						"value": "[parameters('RESTAPI_properties_typeProperties_url')]"
+					},
+					"azurelibkeyvault_properties_typeProperties_baseUrl": {
+						"value": "[parameters('azurelibkeyvault_properties_typeProperties_baseUrl')]"
+					},
+					"cobdateupdate_properties_typeProperties_url": {
+						"value": "[parameters('cobdateupdate_properties_typeProperties_url')]"
+					},
+					"datasettoadls_properties_typeProperties_url": {
+						"value": "[parameters('datasettoadls_properties_typeProperties_url')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "azurelibadf313_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"trigger1_properties_typeProperties_scope": {
+						"value": "[parameters('trigger1_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'azurelibadf313_ArmTemplate_0')]"
+			]
+		}
+	]
+}

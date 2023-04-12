@@ -1,0 +1,51 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "azurelibadf313"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"cobdateupdate_accountKey": {
+			"value": ""
+		},
+		"datasettoadls_accountKey": {
+			"value": ""
+		},
+		"datasettosql_connectionString": {
+			"value": ""
+		},
+		"sqltodataset_connectionString": {
+			"value": ""
+		},
+		"vault_LS_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azurelibsql.database.windows.net;Initial Catalog=azurelib;User ID=yp26501"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"RESTAPI_properties_typeProperties_url": {
+			"value": "https://restcountries.com/v3.1/name/"
+		},
+		"azurelibkeyvault_properties_typeProperties_baseUrl": {
+			"value": "https://keyvaultazurelib.vault.azure.net/"
+		},
+		"cobdateupdate_properties_typeProperties_url": {
+			"value": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"datasettoadls_properties_typeProperties_url": {
+			"value": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"trigger1_properties_typeProperties_scope": {
+			"value": "/subscriptions/edc27ed1-39ef-4b70-b929-239f1e19bb9e/resourceGroups/azurelibstg/providers/Microsoft.Storage/storageAccounts/azuredataengineer313"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

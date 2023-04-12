@@ -1,0 +1,845 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "azurelibadf313"
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+		},
+		"cobdateupdate_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'cobdateupdate'"
+		},
+		"datasettoadls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'datasettoadls'"
+		},
+		"datasettosql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'datasettosql'"
+		},
+		"sqltodataset_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'sqltodataset'"
+		},
+		"vault_LS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'vault_LS'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azurelibsql.database.windows.net;Initial Catalog=azurelib;User ID=yp26501"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"RESTAPI_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://restcountries.com/v3.1/name/"
+		},
+		"azurelibkeyvault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://keyvaultazurelib.vault.azure.net/"
+		},
+		"cobdateupdate_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		},
+		"datasettoadls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azuredataengineer313.dfs.core.windows.net/"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/RESTAPI')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('RESTAPI_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/azurelibkeyvault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('azurelibkeyvault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cobdateupdate')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('cobdateupdate_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('cobdateupdate_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datasettoadls')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('datasettoadls_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "SecureString",
+						"value": "[parameters('datasettoadls_accountKey')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datasettosql')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('datasettosql_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sqltodataset')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('sqltodataset_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/selfhostedIR')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/JSON')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datasettoadls",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"path": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "address",
+						"fileSystem": "landing"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datasettoadls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/cobdateupdate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "cobdateupdate",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "assignment9_q4.json",
+						"folderPath": "customer",
+						"fileSystem": "landing"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/cobdateupdate')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customertable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datasettosql",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "NameStyle",
+						"type": "bit"
+					},
+					{
+						"name": "Title",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FirstName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "MiddleName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "LastName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Suffix",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CompanyName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesPerson",
+						"type": "nvarchar"
+					},
+					{
+						"name": "EmailAddress",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Phone",
+						"type": "nvarchar"
+					},
+					{
+						"name": "PasswordHash",
+						"type": "varchar"
+					},
+					{
+						"name": "PasswordSalt",
+						"type": "varchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datasettosql')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datasettoadls')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "datasettoadls",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"path": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().path",
+							"type": "Expression"
+						},
+						"fileSystem": "landing"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datasettoadls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/datsetrestAPI')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "RESTAPI",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"country": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "@dataset().country",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/RESTAPI')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/forlanding')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureDataLakeStorage1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileSystem": "landing"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": false,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/sdetype2')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "sqltodataset",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "id",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "name",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
+						"type": "varchar"
+					},
+					{
+						"name": "active_flag",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "SalesLT",
+					"table": "emp_type"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/sqltodataset')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vault_LS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('vault_LS_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "azurelibkeyvault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "azuredqldb",
+						"secretVersion": "5289c549704b4145b147df70e44b7938"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/azurelibkeyvault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assign8_quest5')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "aggregate1"
+						},
+						{
+							"name": "filter1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          ProductID as integer,",
+						"          Name as string,",
+						"          ProductNumber as string,",
+						"          Color as string,",
+						"          StandardCost as double,",
+						"          ListPrice as double,",
+						"          Size as string,",
+						"          Weight as double,",
+						"          ProductCategoryID as short,",
+						"          ProductModelID as short,",
+						"          SellStartDate as string,",
+						"          SellEndDate as string,",
+						"          DiscontinuedDate as string,",
+						"          ThumbNailPhoto as string,",
+						"          ThumbnailPhotoFileName as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'landing',",
+						"     folderPath: 'product',",
+						"     fileName: 'SalesLT.Product-Iyt6QPQsBf.txt',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true,",
+						"     partitionBy('roundRobin', 2)) ~> source1",
+						"filter1 aggregate(groupBy(ProductCategoryID),",
+						"     maxlist = max(ListPrice)) ~> aggregate1",
+						"source1 filter(Color != 'Blue') ~> filter1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'landing',",
+						"     folderPath: 'assign8_quest5',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     mapColumn(",
+						"          ProductCategoryID,",
+						"          maxlist",
+						"     ),",
+						"     partitionBy('hash', 1)) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datasettoadls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assignment9_q4')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"linkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "source1"
+						}
+					],
+					"sinks": [
+						{
+							"linkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							},
+							"name": "sink1",
+							"rejectedDataLinkedService": {
+								"referenceName": "datasettoadls",
+								"type": "LinkedServiceReference"
+							}
+						}
+					],
+					"transformations": [
+						{
+							"name": "select1"
+						},
+						{
+							"name": "aggregate1"
+						}
+					],
+					"scriptLines": [
+						"source(output(",
+						"          CustomerID as integer,",
+						"          NameStyle as boolean,",
+						"          Title as string,",
+						"          FirstName as string,",
+						"          MiddleName as string,",
+						"          LastName as string,",
+						"          Suffix as string,",
+						"          CompanyName as string,",
+						"          SalesPerson as string,",
+						"          EmailAddress as string,",
+						"          Phone as string,",
+						"          PasswordHash as string,",
+						"          PasswordSalt as string,",
+						"          rowguid as string,",
+						"          ModifiedDate as string",
+						"     ),",
+						"     useSchema: false,",
+						"     allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     ignoreNoFilesFound: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'landing',",
+						"     folderPath: 'CustomerAddress',",
+						"     fileName: 'saleslt.customer.txt',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: true) ~> source1",
+						"source1 select(mapColumn(",
+						"          CustomerID,",
+						"          FirstName,",
+						"          LastName,",
+						"          EmailAddress",
+						"     ),",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true) ~> select1",
+						"select1 aggregate(groupBy(EmailAddress),",
+						"     each(match(name!='EmailAddress'), $$ = first($$))) ~> aggregate1",
+						"aggregate1 sink(allowSchemaDrift: true,",
+						"     validateSchema: false,",
+						"     format: 'delimited',",
+						"     fileSystem: 'landing',",
+						"     folderPath: 'product',",
+						"     columnDelimiter: ',',",
+						"     escapeChar: '\\\\',",
+						"     quoteChar: '\\\"',",
+						"     columnNamesAsHeader: false,",
+						"     umask: 0022,",
+						"     preCommands: [],",
+						"     postCommands: [],",
+						"     skipDuplicateMapInputs: true,",
+						"     skipDuplicateMapOutputs: true,",
+						"     saveOrder: 1,",
+						"     mapColumn(",
+						"          CustomerID,",
+						"          EmailAddress,",
+						"          FirstName,",
+						"          LastName",
+						"     )) ~> sink1"
+					]
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/datasettoadls')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assign8_quest5')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "assign8_quest5",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"source1": {},
+									"sink1": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-09T16:31:51Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/assign8_quest5')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/assign_10')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach1",
+						"type": "ForEach",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@createArray('https://restcountries.com/v3.1/name/us', 'https://restcountries.com/v3.1/name/india','https://restcountries.com/v3.1/name/russia','https://restcountries.com/v3.1/name/china')",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy data1",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET",
+											"paginationRules": {
+												"supportRFC5988": "true"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "datsetrestAPI",
+											"type": "DatasetReference",
+											"parameters": {
+												"country": {
+													"value": "@item()",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "datasettoadls",
+											"type": "DatasetReference",
+											"parameters": {
+												"path": "assign10"
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Web1",
+						"type": "WebActivity",
+						"dependsOn": [
+							{
+								"activity": "ForEach1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://prod-01.eastus.logic.azure.com:443/workflows/42e4ea0cdae34707a4411c0dced95cfc/triggers/manual/paths/invoke?api-version=2016-10-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=2lptgsl4wiv6ZZc-1V5YxRQYIko2JGw2vPKJ0pyOXA4",
+							"method": "POST",
+							"headers": {},
+							"body": {
+								"value": "{\n\"subject\": \"pipeline name assign11\",\n\n\"Status\": \"Success\",\n\n\"to\": \"yp26501@gmail.com\",\n\n\"Body\": \"Pipeline assign11 is successful\"\n}",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2023-04-12T17:28:28Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/datsetrestAPI')]",
+				"[concat(variables('factoryId'), '/datasets/datasettoadls')]"
+			]
+		}
+	]
+}
