@@ -2641,59 +2641,22 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/lookup_pipeline')]",
+			"name": "[concat(parameters('factoryName'), '/session15_pipeline_parameter')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "lookup_condition",
-						"type": "Lookup",
+						"name": "ForEach1",
+						"type": "ForEach",
 						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
 						"userProperties": [],
 						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select count(*) as total from saleslt.customer",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "sqltodataset",
-								"type": "DatasetReference",
-								"parameters": {
-									"database": "saleslt",
-									"table": "customer"
-								}
-							},
-							"firstRowOnly": true
-						}
-					},
-					{
-						"name": "If Condition1",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "lookup_condition",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@greater(activity('lookup_condition').output.firstRow.total,500)",
+							"items": {
+								"value": "@pipeline().parameters.tablename",
 								"type": "Expression"
 							},
-							"ifTrueActivities": [
+							"activities": [
 								{
 									"name": "Copy data1",
 									"type": "Copy",
@@ -2709,7 +2672,6 @@
 									"typeProperties": {
 										"source": {
 											"type": "AzureSqlSource",
-											"sqlReaderQuery": "select * from saleslt.customer",
 											"queryTimeout": "02:00:00",
 											"partitionOption": "None"
 										},
@@ -2740,7 +2702,10 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"database": "saleslt",
-												"table": "customer"
+												"table": {
+													"value": "@item()",
+													"type": "Expression"
+												}
 											}
 										}
 									],
@@ -2750,7 +2715,7 @@
 											"type": "DatasetReference",
 											"parameters": {
 												"path": {
-													"value": "@{formatDateTime(utcNow(), 'yyyy')}/@{formatDateTime(utcNow(), 'mm')}",
+													"value": "@item()",
 													"type": "Expression"
 												}
 											}
@@ -2759,39 +2724,25 @@
 								}
 							]
 						}
-					},
-					{
-						"name": "Execute Pipeline1",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "If Condition1",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "child_pipeline",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"annotations": [],
-				"lastPublishTime": "2023-04-09T16:31:52Z"
+				"parameters": {
+					"tablename": {
+						"type": "array",
+						"defaultValue": [
+							"product",
+							"Customer"
+						]
+					}
+				},
+				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/sqltodataset')]",
-				"[concat(variables('factoryId'), '/pipelines/child_pipeline')]"
+				"[concat(variables('factoryId'), '/datasets/sqltodataset')]"
 			]
 		}
 	]
